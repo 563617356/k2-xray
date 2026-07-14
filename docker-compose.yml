@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mihomo:
+    image: ghcr.io/metacubex/mihomo:latest
+    container_name: mihomo
+    restart: always
+    volumes:
+      - /opt/mihomo/config:/root/.config/mihomo
+    ports:
+      - "7890:7890" # HTTP 代理端口
+      - "7897:7897" # HTTP 代理端口(备用)
+      - "9090:9090" # 管理面板端口
+    network_mode: bridge
+
+  yacd:
+    image: haishanh/yacd:latest
+    container_name: yacd
+    restart: always
+    ports:
+      - "9091:80" # 通过 9091 访问管理面板
+    environment:
+      - API_BASE_URL=http://<你的设备IP>:9090
+    depends_on:
+      - mihomo
